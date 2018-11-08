@@ -1,0 +1,14 @@
+{
+    "name": "roygoldman/drupal-env-settings",
+    "description": "A library to generate Drupal projects settings using environmental variables.",
+    "type": "library",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Rich Gerdes",
+            "email": "rich@richgerdes.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
