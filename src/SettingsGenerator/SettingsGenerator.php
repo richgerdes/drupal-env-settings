@@ -84,9 +84,14 @@ DOC_COMMENT_ENVIRONMENT;
     // Generate code for environmental variable config.
     $this->generateVariableCode($code, $env_settings);
 
+    // Ensure existance of output directory.
+    if (!file_exists($output_path)) {
+      mkdir(dirname($output_path), 0774, TRUE);
+    }
+
+    // Write setting file to filesystem.
     $prettyPrinter = new PrettyPrinter();
     $generated_source = $prettyPrinter->prettyPrintFile($code);
-
     file_put_contents($output_path, $generated_source);
   }
 
