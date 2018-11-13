@@ -3,7 +3,6 @@
 namespace RoyGoldman\DrupalEnvSettings\Command;
 
 use Composer\Command\BaseCommand;
-use DrupalFinder\DrupalFinder;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,25 +36,29 @@ class GenerateCommand extends BaseCommand {
     $config = [];
     $config['site'] = $input->getOption('site');
 
-    // Locate the Drupal root.
-    $web_root = dirname(getcwd());
-    $drupalFinder = new DrupalFinder();
-    if ($drupalFinder->locateRoot($web_root)) {
-      // If Drupal is available, find the web root.
-      $web_root = realpath($drupalFinder->getDrupalRoot());
-      if (basename($web_root) === 'core') {
-        // Walk up one level for Drupal 8 sites.
-        $web_root = dirname($web_root);
-      }
+    $web_root = getcwd();
+
+    $composer = $this->getComposer();
+
+    $repositoryManager = $composer->getRepositoryManager();
+    $localRepository = $repositoryManager->getLocalRepository();
+    $drupalPackage = $localRepository->findPackages('drupal/core');
+    if (!empty($drupalPackage)) {
+      $drupalPackage = $localRepository->findPackages('drupal/drupal');
     }
-    $web_root = realpath($web_root);
+
+    if (!empty($drupalPackage)) {
+      $drupalPackage = reset($drupalPackage);
+      $installationManager = $composer->getInstallationManager();
+      $web_root = $installationManager->getInstallPath($drupalPackage);
+    }
 
     if (!empty($input->getOption('template'))) {
       $config['template'] = $input->getOption('template');
     }
     else {
       // If template file isn't specified, use the example one.
-      $config['template'] = $web_root . 'sites/default/example.settings.php';
+      $config['template'] = $web_root . '/sites/default/example.settings.php';
     }
 
     $output_file = $web_root . '/sites/' . $config['site'] . '/settings.php';
