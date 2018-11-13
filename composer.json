@@ -20,6 +20,7 @@
     "minimum-stability": "dev",
     "require": {
         "nikic/php-parser": "^4.1@dev",
+        "composer-plugin-api": "^1.0.0",
         "webflo/drupal-finder": "^1.0.0"
     }
 }
