@@ -22,7 +22,7 @@ class GenerateCommand extends BaseCommand {
   protected function configure() {
     parent::configure();
     $this
-      ->setName('drupal:env')
+      ->setName('drupal:env-settings:generate')
       ->setDescription('Generage Drupal Settings file using environmental variable configuriaton.')
 
       ->addOption('site', 's', InputOption::VALUE_OPTIONAL, 'Drupal site name.', 'default')
