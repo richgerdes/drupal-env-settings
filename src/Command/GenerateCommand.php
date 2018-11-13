@@ -35,6 +35,7 @@ class GenerateCommand extends BaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $config = [];
     $config['site'] = $input->getOption('site');
+    $config['template'] = '_blank';
     $web_root = getcwd();
 
     // Load Drupal package if avaiable and set webroot.
