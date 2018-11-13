@@ -16,7 +16,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\ParserFactory;
 use RoyGoldman\DrupalEnvSettings\PrettyPrinter;
@@ -87,15 +87,13 @@ DOC_COMMENT_ENVIRONMENT;
     $prettyPrinter = new PrettyPrinter();
     $generated_source = $prettyPrinter->prettyPrintFile($code);
 
-    echo $generated_source . "\n";
-
     file_put_contents($output_path, $generated_source);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function injectConfigLoader(array &$code) {
+  public function injectConfigLoader(array &$code) {
     $code[] = new If_(
       new FuncCall(
         new Name('file_exists'),
@@ -127,7 +125,7 @@ DOC_COMMENT_ENVIRONMENT;
   /**
    * {@inheritdoc}
    */
-  protected function generateVariableCode(array &$code, array $env_settings) {
+  public function generateVariableCode(array &$code, array $env_settings) {
     $first = TRUE;
     foreach ($env_settings as $name => $value) {
       $variable = new Variable($name);
@@ -177,7 +175,7 @@ DOC_COMMENT_ENVIRONMENT;
   /**
    * {@inheritdoc}
    */
-  protected function buildGetEnvNode($var_name) {
+  public function buildGetEnvNode($var_name) {
     return (new FuncCall(
       new Name('getenv'),
       [
@@ -191,7 +189,7 @@ DOC_COMMENT_ENVIRONMENT;
   /**
    * {@inheritdoc}
    */
-  protected function getAsScaler($value) {
+  public function getAsScaler($value) {
     switch (gettype($value)) {
       case 'float':
         return new DNumber($value);
@@ -208,7 +206,7 @@ DOC_COMMENT_ENVIRONMENT;
   /**
    * {@inheritdoc}
    */
-  protected function buildArrayItems(array $values) {
+  public function buildArrayItems(array $values) {
     $array_values = [];
     foreach ($values as $key => $value) {
       if (is_array($value)) {
