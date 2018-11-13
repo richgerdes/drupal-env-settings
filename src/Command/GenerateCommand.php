@@ -14,7 +14,7 @@ use RoyGoldman\DrupalEnvSettings\SettingsGenerator\SettingsGenerator;
  *
  * Downloads scaffold files and generates the autoload.php file.
  */
-class SettingsCommand extends BaseCommand {
+class GenerateCommand extends BaseCommand {
 
   /**
    * {@inheritdoc}
