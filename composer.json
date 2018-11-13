@@ -1,7 +1,7 @@
 {
     "name": "roygoldman/drupal-env-settings",
     "description": "A library to generate Drupal projects settings using environmental variables.",
-    "type": "library",
+    "type": "composer-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
@@ -9,6 +9,17 @@
             "email": "rich@richgerdes.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "RoyGoldman\\DrupalEnvSettings\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "RoyGoldman\\DrupalEnvSettings\\Plugin"
+    },
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "nikic/php-parser": "^4.1@dev",
+        "webflo/drupal-finder": "^1.0.0"
+    }
 }
