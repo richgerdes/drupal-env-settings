@@ -82,7 +82,6 @@ class GenerateCommand extends BaseCommand {
 
     // Load env settings from composer.
     $env_settings = [];
-    $composer = $this->getComposer();
     $root_package = $composer->getPackage();
     $extra = $root_package->getExtra();
     if (isset($extra['env-settings'])) {
