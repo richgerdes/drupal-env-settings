@@ -26,7 +26,7 @@ class ConfigureCommand extends BaseCommand {
     $this
       ->setName('drupal:env-settings:configure')
       ->setDescription('Generate environment configuraiton files for settings.')
-      ->addOption('from-env', 'e', InputOption::VALUE_OPTIONAL, 'Take values from the current environemnt.')
+      ->addOption('from-env', 'e', InputOption::VALUE_OPTIONAL, 'Take values from the current environemnt.', FALSE)
       ->addOption('generators', 'g', InputOption::VALUE_REQUIRED, 'Comma separated list of generators (ex. --generators=apache,dotenv).', '');
 
     // For each gnerator, create an instance and the load config from it.
