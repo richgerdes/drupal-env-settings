@@ -14,6 +14,7 @@ class ConfigGeneratorHelper {
    */
   protected static $generators = [
     'apache' => 'RoyGoldman\DrupalEnvSettings\ConfigGenerator\ApacheGenerator',
+    'dotenv' => 'RoyGoldman\DrupalEnvSettings\ConfigGenerator\DotEnvGenerator',
   ];
 
   /**

@@ -6,7 +6,7 @@ use RoyGoldman\DrupalEnvSettings\Command\ConfigureCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * List of all commands provided by this package.
+ * Defines apache config generator.
  */
 class ApacheGenerator extends ConfigGeneratorBase {
 
@@ -15,7 +15,7 @@ class ApacheGenerator extends ConfigGeneratorBase {
   const TEMPLATE_SOURCE = '<VirtualHost></VirtualHost>';
 
   /**
-   * Creates an config generator instance.
+   * Creates an config generator instance for apache.
    *
    * @param \RoyGoldman\DrupalEnvSettings\Command\ConfigureCommand $command
    *   Generate command.
