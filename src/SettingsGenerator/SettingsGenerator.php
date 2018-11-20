@@ -90,6 +90,8 @@ DOC_COMMENT_ENVIRONMENT;
     // Write setting file to filesystem.
     $prettyPrinter = new PrettyPrinter();
     $generated_source = $prettyPrinter->prettyPrintFile($code);
+    // Add trailing newline for clean file printing.
+    $generated_source .= "\n";
     file_put_contents($output_path, $generated_source);
   }
 
