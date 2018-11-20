@@ -85,14 +85,35 @@ DOC_COMMENT_ENVIRONMENT;
     $this->generateVariableCode($code, $env_settings);
 
     // Ensure existance of output directory.
-    if (!file_exists($output_path)) {
-      mkdir(dirname($output_path), 0774, TRUE);
-    }
+    $this->mkdirRecursive(dirname($output_path));
 
     // Write setting file to filesystem.
     $prettyPrinter = new PrettyPrinter();
     $generated_source = $prettyPrinter->prettyPrintFile($code);
+    // Add trailing newline for clean file printing.
+    $generated_source .= "\n";
     file_put_contents($output_path, $generated_source);
+  }
+
+  /**
+   * Ensure that the settings directory exists.
+   *
+   * Recursively ensure that the settings directory exists, and create the
+   * directory and required parents if they are missing.
+   *
+   * @param string $path
+   *   Directory path name.
+   *
+   * @return boolean
+   *   True if directory exists or creation was successful. False otherwise.
+   */
+  protected function mkdirRecursive($path) {
+    if (is_dir($path)) {
+      return true;
+    }
+    $prev_path = dirname($path);
+    $can_create_next = $this->mkdirRecursive($prev_path) && is_writable($prev_path);
+    return ($can_create_next) ? mkdir($path, 0774, TRUE) : false;
   }
 
   /**
@@ -135,45 +156,63 @@ DOC_COMMENT_ENVIRONMENT;
     foreach ($env_settings as $name => $value) {
       $variable = new Variable($name);
       if (is_array($value)) {
-        // For nested arrays, with one value, use dim lookup format.
-        while (count($value) == 1) {
-          $value_keys = array_keys($value);
-          $key = array_shift($value_keys);
-          $variable = new ArrayDimFetch(
+        foreach($value as $dim => $sub_value) {
+          $sub_variable = new ArrayDimFetch(
             $variable,
-            $this->getAsScaler($key)
+            $this->getAsScaler($dim)
           );
-          $value = $value[$key];
+          // For nested arrays, with one value, use dim lookup format.
+          while (is_array($sub_value) && count($sub_value) == 1) {
+            $value_keys = array_keys($sub_value);
+            $key = array_shift($value_keys);
+            $sub_variable = new ArrayDimFetch(
+              $sub_variable,
+              $this->getAsScaler($key)
+            );
+            $sub_value = $sub_value[$key];
+          }
+          if (!is_array($sub_value)) {
+            // Non-array values are expected to be a environmental variable names.
+            $assigned_value = $this->buildGetEnvNode($sub_value);
+          }
+          else {
+            // An array at this point is multivalued.
+            // Each value needs to be expanded into possibly nested variables.
+            $assigned_value = $this->buildArrayItems($sub_value);
+          }
+          // Build line of configuration and add it to the file.
+          $code[] = new Expression(
+            new Assign(
+              $sub_variable,
+              $assigned_value
+            )
+          );
+        if ($first) {
+          $first = FALSE;
+          $last = array_pop($code);
+          $last->setAttribute('comments', [new Comment(static::DOC_COMMENT_ENVIRONMENT)]);
+          $code[] = $last;
         }
-
-        if (!is_array($value)) {
-          // Non-array values are expected to be a environmental variable names.
-          $assigned_value = $this->buildGetEnvNode($value);
-        }
-        else {
-          // An array at this point is multivalued.
-          // Each value needs to be expanded into possibly nested variables.
-          $assigned_value = $this->buildArrayItems($value);
         }
       }
       else {
         // Non-array values are expected to be a environmental variable names.
         $assigned_value = $this->buildGetEnvNode($value);
+        // Build line of configuration and add it to the file.
+        $code[] = new Expression(
+          new Assign(
+            $variable,
+            $assigned_value
+          )
+        );
+        if ($first) {
+          $first = FALSE;
+          $last = array_pop($code);
+          $last->setAttribute('comments', [new Comment(static::DOC_COMMENT_ENVIRONMENT)]);
+          $code[] = $last;
+        }
       }
 
-      // Build line of configuration and add it to the file.
-      $code[] = new Expression(
-        new Assign(
-          $variable,
-          $assigned_value
-        )
-      );
-      if ($first) {
-        $first = FALSE;
-        $last = array_pop($code);
-        $last->setAttribute('comments', [new Comment(static::DOC_COMMENT_ENVIRONMENT)]);
-        $code[] = $last;
-      }
     }
   }
 
