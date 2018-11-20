@@ -85,14 +85,33 @@ DOC_COMMENT_ENVIRONMENT;
     $this->generateVariableCode($code, $env_settings);
 
     // Ensure existance of output directory.
-    if (!file_exists($output_path)) {
-      mkdir(dirname($output_path), 0774, TRUE);
-    }
+    $this->mkdirRecursive(dirname($output_path));
 
     // Write setting file to filesystem.
     $prettyPrinter = new PrettyPrinter();
     $generated_source = $prettyPrinter->prettyPrintFile($code);
     file_put_contents($output_path, $generated_source);
+  }
+
+  /**
+   * Ensure that the settings directory exists.
+   *
+   * Recursively ensure that the settings directory exists, and create the
+   * directory and required parents if they are missing.
+   *
+   * @param string $path
+   *   Directory path name.
+   *
+   * @return boolean
+   *   True if directory exists or creation was successful. False otherwise.
+   */
+  protected function mkdirRecursive($path) {
+    if (is_dir($path)) {
+      return true;
+    }
+    $prev_path = dirname($path);
+    $can_create_next = $this->mkdirRecursive($prev_path) && is_writable($prev_path);
+    return ($can_create_next) ? mkdir($path, 0774, TRUE) : false;
   }
 
   /**
