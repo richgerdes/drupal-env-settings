@@ -35,7 +35,6 @@ class GenerateCommand extends BaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $config = [];
     $config['site'] = $input->getOption('site');
-    $config['template'] = '_blank';
     $web_root = getcwd();
 
     // Load Drupal package if avaiable and set webroot.
@@ -61,21 +60,32 @@ class GenerateCommand extends BaseCommand {
     $output_file = $web_root . '/sites/' . $config['site'] . '/settings.php';
     $template_source = '';
 
+    $local_default_template = dirname($web_root) . '/env-settings-template.php';
+    $druapl_default_template = $web_root . '/sites/default/default.settings.php';
+
     // If tempalte file exists, load the source from the file.
     if (!empty($input->getOption('template'))) {
       $config['template'] = $input->getOption('template');
     }
-    if (!isset($config['template']) || empty($config['template']) || $config['template'] === 'default') {
+
+    // If there is no template arguement attempt to load a default one.
+    if (!isset($config['template']) || empty($config['template']) || (isset($config['template']) && $config['template'] === 'default')) {
       // If template file isn't specified, use the example one.
-      if ($config['template'] !== 'default' && file_exists($output_file)) {
+      if ((!isset($config['template']) || $config['template'] !== 'default') && file_exists($output_file)) {
         // If the output file exists, use that instead.
         $config['template'] = $output_file;
       }
+      elseif (file_exists($local_default_template)) {
+        // Attempt to load a template from the root of the project, if provided.
+        $config['template'] = $local_default_template;
+      }
       else {
         // Otherwise, load the drupal example file.
-        $config['template'] = $web_root . '/sites/default/default.settings.php';
+        $config['template'] = $druapl_default_template;
       }
     }
+
+    // Load new source from template, if it exists.
     if ($config['template'] !== '_blank' && file_exists($config['template'])) {
       $template_source = file_get_contents($config['template']);
     }
