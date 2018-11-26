@@ -12,7 +12,8 @@
     "autoload": {
         "psr-4": {
             "RoyGoldman\\DrupalEnvSettings\\": "src/"
-        }
+        },
+        "files": ["load.environment.php"]
     },
     "extra": {
         "class": "RoyGoldman\\DrupalEnvSettings\\Plugin"
