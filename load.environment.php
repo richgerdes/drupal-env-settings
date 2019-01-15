@@ -12,7 +12,7 @@ use DrupalFinder\DrupalFinder;
 // Only attempt autoloading from .env if the library exists.
 if (class_exists(Dotenv::class)) {
   // Locate .env file location.
-  $dir = getcwd();
+  $dir = dirname(dirname(__DIR__));
   $drupalFinder = new DrupalFinder();
   if ($drupalFinder->locateRoot($dir)) {
     // If Drupal is available, use a .env in the parent directory.
