@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class PhpEnvLoaderGenerator extends ConfigGeneratorBase {
 
-  const LINE_TEMPLATE = 'putenv("%s=%s")';
+  const LINE_TEMPLATE = 'putenv("%s=%s");';
 
   const TEMPLATE_SOURCE = <<<SOURCE
 <?php
